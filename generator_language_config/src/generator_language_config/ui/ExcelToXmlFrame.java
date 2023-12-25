@@ -1,5 +1,6 @@
 package generator_language_config.ui;
 
+import generator_language_config.UIMain;
 import generator_language_config.util.ExcelFilter;
 import generator_language_config.util.ExcelUtil;
 
@@ -119,6 +120,7 @@ public class ExcelToXmlFrame extends JFrame implements ActionListener {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setCurrentDirectory(UIMain.LanguageFile);
         chooser.addChoosableFileFilter(new ExcelFilter());
         chooser.showDialog(new JLabel(), "选择");
         File file = chooser.getSelectedFile();
@@ -132,6 +134,7 @@ public class ExcelToXmlFrame extends JFrame implements ActionListener {
     private File selectFile() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setCurrentDirectory(UIMain.LanguageFile);
         chooser.showDialog(new JLabel(), "选择");
         File file = chooser.getSelectedFile();
         if (file != null && file.isDirectory()) {

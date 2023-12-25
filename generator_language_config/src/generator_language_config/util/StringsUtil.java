@@ -48,7 +48,7 @@ public class StringsUtil {
         br.close();
     }
 
-    private LinkedHashMap<String, Object> readStrings1(File file) {
+    public static LinkedHashMap<String, Object> readStrings1(File file) {
         try {
             FileReader reader = new FileReader(file);//定义一个fileReader对象，用来初始化BufferedReader
             BufferedReader bReader = new BufferedReader(reader);//new一个BufferedReader对象，将文件内容读取到缓存
@@ -66,7 +66,7 @@ public class StringsUtil {
         return new LinkedHashMap<>();
     }
 
-    private LinkedHashMap<String, Object> getKeyAndValues(String s1) {
+    private static LinkedHashMap<String, Object> getKeyAndValues(String s1) {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         String[] split = s1.split("\";");
 
@@ -83,7 +83,7 @@ public class StringsUtil {
         return map;
     }
 
-    private void getKeyValue(Map<String, Object> map, String s) {
+    private  static void getKeyValue(Map<String, Object> map, String s) {
         try {
 
             String replace = s.replace("\\\"", "");

@@ -53,7 +53,7 @@ public final class XMLUtil {
         }
     }
 
-    public static Map<String, Object> readFormatXML(File file) throws DocumentException {
+    public static LinkedHashMap<String, Object> readFormatXML(File file) throws DocumentException {
         if (!file.exists()) {
             throw new DocumentException("文件不存在");
         }
@@ -63,7 +63,7 @@ public final class XMLUtil {
         Document document = reader.read(file);
         //获取根节点元素对象
         Element rootElement = document.getRootElement();
-        Map<String, Object> map = new LinkedHashMap<>();
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         for (int i = 0, size = rootElement.nodeCount(); i < size; i++) {
             Node node = rootElement.node(i);
             short nodeType = node.getNodeType();

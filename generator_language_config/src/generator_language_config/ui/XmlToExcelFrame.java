@@ -1,5 +1,6 @@
 package generator_language_config.ui;
 
+import generator_language_config.UIMain;
 import generator_language_config.util.ExcelUtil;
 import generator_language_config.util.XmlFilter;
 
@@ -81,7 +82,7 @@ public class XmlToExcelFrame extends JFrame implements ActionListener {
             MainFrame frame = new MainFrame();
             XmlToExcelFrame.this.dispose();
         } else if (e.getSource() == openFileButton) {
-//            selectXml();
+            selectXml();
         } else if (e.getSource() == outputFileButton) {
             selectFile();
         } else if (e.getSource() == generatorButton) {
@@ -111,9 +112,11 @@ public class XmlToExcelFrame extends JFrame implements ActionListener {
 
     private File selectXml() {
         JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
-        chooser.addChoosableFileFilter(new XmlFilter());
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//        chooser.setAcceptAllFileFilterUsed(false);
+//        chooser.addChoosableFileFilter(new XmlFilter());
+
+        chooser.setCurrentDirectory(UIMain.LanguageFile);
         chooser.showDialog(new JLabel(), "选择");
         File file = chooser.getSelectedFile();
         if (file != null && file.isDirectory()) {
@@ -127,6 +130,8 @@ public class XmlToExcelFrame extends JFrame implements ActionListener {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.showDialog(new JLabel(), "选择");
+
+        chooser.setCurrentDirectory(UIMain.LanguageFile);
         File file = chooser.getSelectedFile();
         if (file != null && file.isDirectory()) {
             outputFile = file;

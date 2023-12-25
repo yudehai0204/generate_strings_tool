@@ -46,7 +46,7 @@ public class ExcelUtil {
 
             Set<String> langs = files.keySet();
 
-            Map<String, List<StringEntity>> map = new HashMap<>();
+            LinkedHashMap<String, List<StringEntity>> map = new LinkedHashMap<>();
 
 
             XSSFWorkbook xwb = new XSSFWorkbook();
@@ -80,11 +80,11 @@ public class ExcelUtil {
         }
     }
 
-    private void filterXmlString(Map<String, File> files, Set<String> langs, Map<String, List<StringEntity>> map, XSSFRow row) throws DocumentException {
+    private void filterXmlString(Map<String, File> files, Set<String> langs, LinkedHashMap<String, List<StringEntity>> map, XSSFRow row) throws DocumentException {
         int col = 1;
         for (String lang : langs) {
             row.createCell(col).setCellValue(lang);
-            Map<String, Object> xmls = XMLUtil.readFormatXML(files.get(lang));
+            LinkedHashMap<String, Object> xmls = XMLUtil.readFormatXML(files.get(lang));
             for (Map.Entry<String, Object> entry : xmls.entrySet()) {
                 List<StringEntity> stringEntities = map.get(entry.getKey());
                 if (stringEntities == null) {
@@ -105,6 +105,26 @@ public class ExcelUtil {
         for (File value : tempList) {
             if (value.isFile()) {
                 if (value.getName().equals("strings.xml")) {
+                    String parent = value.getParent();
+                    String fileFolderName = parent.substring(parent.lastIndexOf(File.separator) + 1);
+                    files.put(fileFolderName.substring(fileFolderName.indexOf("-") + 1), value);
+                    System.out.println(fileFolderName);
+                }
+
+            } else if (value.isDirectory() && value.toString().contains("values")) {
+                listStringFile(value.getAbsolutePath(), files);
+            } else {
+//                System.out.println("不生成 = " + value.toString());
+            }
+        }
+    }
+
+
+    private void listIosStringFile(String xmlResPath, Map<String, File> files){
+        File[] tempList = new File(xmlResPath).listFiles();
+        for (File value : tempList) {
+            if (value.isFile()) {
+                if (value.getName().equals("Localizable.strings")) {
                     String parent = value.getParent();
                     String fileFolderName = parent.substring(parent.lastIndexOf(File.separator) + 1);
                     files.put(fileFolderName.substring(fileFolderName.indexOf("-") + 1), value);

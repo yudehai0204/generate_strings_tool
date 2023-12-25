@@ -1,8 +1,9 @@
 package generator_language_config.ui;
 
 import generator_language_config.UIMain;
-import generator_language_config.util.ExcelFilter;
-import generator_language_config.util.ExcelToStringsUtil;
+import generator_language_config.util.ExcelUtil;
+import generator_language_config.util.StringsToExcelUtil;
+import sun.applet.Main;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -10,7 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
-public class ExcelToStringsFrame extends JFrame implements ActionListener {
+public class StringsToExcelFrame extends JFrame implements ActionListener {
     private JButton homeButton;
     private JButton openFileButton;
     private JTextField openFileTextField;
@@ -22,11 +23,11 @@ public class ExcelToStringsFrame extends JFrame implements ActionListener {
 
     private JButton generatorButton;
 
-    private File openFile;
+    private String openFilePath;
     private File outputFile;
 
-    public ExcelToStringsFrame() {
-        super("Excel生成Strings-Metal");
+    public StringsToExcelFrame() {
+        super("String生成Excel");
         initUI();
         this.setResizable(false);
         this.setSize(500, 500);
@@ -42,14 +43,14 @@ public class ExcelToStringsFrame extends JFrame implements ActionListener {
         homeButton.addActionListener(this);
         this.add(homeButton);
 
-        openFileLabel = new JLabel("Excel:");
+        openFileLabel = new JLabel("String:");
         openFileLabel.setBounds(60, 90, 40, 40);
 
         openFileTextField = new JTextField(200);
         openFileTextField.setBounds(110, 90, 200, 40);
         this.add(openFileTextField);
 
-        openFileButton = new JButton("选择文件");
+        openFileButton = new JButton("输入Res目录");
         openFileButton.setBounds(320, 90, 90, 40);
         openFileButton.addActionListener(this);
         this.add(openFileLabel);
@@ -80,34 +81,28 @@ public class ExcelToStringsFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == homeButton) {
             MainFrame frame = new MainFrame();
-            ExcelToStringsFrame.this.dispose();
+            StringsToExcelFrame.this.dispose();
         } else if (e.getSource() == openFileButton) {
-            selectExcel();
+            selectXml();
         } else if (e.getSource() == outputFileButton) {
             selectFile();
         } else if (e.getSource() == generatorButton) {
-            String openFileText = openFileTextField.getText();
-            if (openFile == null && openFileText != null && !openFileText.equals("")) {
-                outputFile = new File(openFileText);
-            }
-
-            if (openFile == null) {
-                JOptionPane.showMessageDialog(null, "请选择Excel", "提示", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            String text = outputFileTextField.getText();
-
-            if (outputFile == null && text != null && !text.equals("")) {
-                outputFile = new File(text);
-            }
-
             if (outputFile == null) {
-                JOptionPane.showMessageDialog(null, "请选择XML生成位置", "提示", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "请选择Excel生成位置", "提示", JOptionPane.WARNING_MESSAGE);
                 return;
             }
+
+            String text = openFileTextField.getText();
+
+            if (text == null || text.equals("")) {
+                JOptionPane.showMessageDialog(null, "请选择Strings的位置", "提示", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+
             try {
-                ExcelToStringsUtil excelUtil = new ExcelToStringsUtil();
-                excelUtil.readExcel(openFile, outputFile);
+                StringsToExcelUtil excelUtil = new StringsToExcelUtil();
+                excelUtil.writXLSXExcel(text, outputFile);
                 JOptionPane.showMessageDialog(null, "生成完毕", "提示", JOptionPane.WARNING_MESSAGE);
             } catch (IOException e1) {
                 JOptionPane.showMessageDialog(null, "很抱歉，发生错误！", "提示", JOptionPane.WARNING_MESSAGE);
@@ -116,16 +111,16 @@ public class ExcelToStringsFrame extends JFrame implements ActionListener {
         }
     }
 
-    private File selectExcel() {
+    private File selectXml() {
         JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
-        chooser.addChoosableFileFilter(new ExcelFilter());
-        chooser.setCurrentDirectory(UIMain.LanguageFile);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//        chooser.setAcceptAllFileFilterUsed(false);
+//        chooser.addChoosableFileFilter(new XmlFilter());
         chooser.showDialog(new JLabel(), "选择");
+        chooser.setCurrentDirectory(UIMain.LanguageFile);
         File file = chooser.getSelectedFile();
-        if (file != null && file.isFile()) {
-            openFile = file;
+        if (file != null && file.isDirectory()) {
+            openFilePath = file.getAbsolutePath();
             openFileTextField.setText(file.getAbsolutePath());
         }
         return null;
@@ -134,8 +129,8 @@ public class ExcelToStringsFrame extends JFrame implements ActionListener {
     private File selectFile() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setCurrentDirectory(UIMain.LanguageFile);
         chooser.showDialog(new JLabel(), "选择");
+        chooser.setCurrentDirectory(UIMain.LanguageFile);
         File file = chooser.getSelectedFile();
         if (file != null && file.isDirectory()) {
             outputFile = file;
